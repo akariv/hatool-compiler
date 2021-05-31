@@ -52,7 +52,7 @@ def assign_ids(x, stack=[]):
                 for i, s in enumerate(v):
                     new_stack = stack + [uid, str(i)]
                     s['uid'] = get_uid(s, new_stack, i)
-                    assign_ids(s, new_stack)    
+                    assign_ids(s, new_stack)
             else:
                 assign_ids(v, stack)
         if uid is not None:
@@ -72,7 +72,7 @@ def process_includes(base, scripts):
             for snippet in snippets:
                 include = snippet.get('include')
                 if include:
-                    snippet = yaml.load(base.joinpath(include).open(),
+                    snippet = yaml.load(base.joinpath(include).open('r', encoding='utf8'),
                                         Loader=yaml.SafeLoader)
                     processed.extend(snippet)
                 else:
@@ -85,12 +85,12 @@ def main(f_in=None, f_out=None):
     content_base = f_in.parent
     f_out = Path(sys.argv[2])
 
-    scripts = yaml.load(f_in.open(), Loader=yaml.SafeLoader)
+    scripts = yaml.load(f_in.open('r', encoding='utf8'), Loader=yaml.SafeLoader)
     process_includes(content_base, scripts)
     assign_ids(scripts, [str(f_in)])
 
     scripts = dict(s=scripts)
-    f_out.open('w').write(json.dumps(
+    f_out.open('w', encoding='utf8').write(json.dumps(
         scripts, ensure_ascii=False, sort_keys=True, indent=2)
     )
     return 0
